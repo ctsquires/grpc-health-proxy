@@ -20,7 +20,10 @@ message HealthCheckResponse {
 service Health {
     rpc Check (HealthCheckRequest) returns (HealthCheckResponse) {
         option (google.api.http) = {
-			get: "/health"
+			get: "/health/{service}"
+			additional_bindings {
+				get: "/health"
+			}
 		};
     };
 

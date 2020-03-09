@@ -31,8 +31,10 @@ func main() {
 	reflection.Register(grpcServer)
 
 	healthServer := health.NewHealthServer()
+	healthServer.SetServingStatus("helloproto.Greeter", healthproto.HealthCheckResponse_SERVING)
 	runMux := runtime.NewServeMux()
 	healthproto.RegisterHealthServer(grpcServer, healthServer)
+
 	if err := healthproto.RegisterHealthHandlerServer(ctx, runMux, healthServer); err != nil {
 		log.Fatal("Could not register health handler server")
 	}
@@ -55,7 +57,7 @@ func main() {
 		errChan <- grpcServer.Serve(lis)
 	}()
 	go func() {
-		log.Println(ctx, "ops listening on port", *healthPort)
+		log.Println(ctx, "Health Http Server Listening On", *healthPort)
 		errChan <- healthHttpServer.ListenAndServe()
 	}()
 
