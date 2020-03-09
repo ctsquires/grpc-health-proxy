@@ -6,7 +6,7 @@ Package healthproto is a reverse proxy.
 
 It translates gRPC into RESTful JSON APIs.
 */
-package healthproto
+package health
 
 import (
 	"context"

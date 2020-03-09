@@ -9,9 +9,7 @@ import (
 	"net/http"
 
 	"github.com/ctsquires/grpc-health-proxy/pkg/health"
-	"github.com/ctsquires/grpc-health-proxy/pkg/health/healthproto"
 	"github.com/ctsquires/grpc-health-proxy/pkg/hello"
-	"github.com/ctsquires/grpc-health-proxy/pkg/hello/helloproto"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
@@ -27,15 +25,15 @@ func main() {
 	ctx := context.Background()
 
 	grpcServer := grpc.NewServer()
-	helloproto.RegisterGreeterServer(grpcServer, hello.NewHelloServer())
+	hello.RegisterGreeterServer(grpcServer, hello.NewHelloServer())
 	reflection.Register(grpcServer)
 
 	healthServer := health.NewHealthServer()
-	healthServer.SetServingStatus("helloproto.Greeter", healthproto.HealthCheckResponse_SERVING)
+	healthServer.SetServingStatus("helloproto.Greeter", health.HealthCheckResponse_SERVING)
 	runMux := runtime.NewServeMux()
-	healthproto.RegisterHealthServer(grpcServer, healthServer)
+	health.RegisterHealthServer(grpcServer, healthServer)
 
-	if err := healthproto.RegisterHealthHandlerServer(ctx, runMux, healthServer); err != nil {
+	if err := health.RegisterHealthHandlerServer(ctx, runMux, healthServer); err != nil {
 		log.Fatal("Could not register health handler server")
 	}
 

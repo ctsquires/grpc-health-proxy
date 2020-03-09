@@ -19,9 +19,9 @@ lint: ## Reorders imports and runs the golangci-lint checker
 	golangci-lint run
 
 gen:
-	protoc -I . -I external/ --go_out=plugins=grpc:. pkg/health/healthproto/health.proto
-	protoc -I . -I external/ --grpc-gateway_out=logtostderr=true:. pkg/health/healthproto/health.proto
-	protoc -I . --go_out=plugins=grpc:. pkg/hello/helloproto/helloworld.proto
+	protoc -I . -I external/ --go_out=plugins=grpc:../ proto/health.proto
+	protoc -I . -I external/ --grpc-gateway_out=logtostderr=true:../ proto/health.proto
+	protoc -I . --go_out=plugins=grpc:../ proto/helloworld.proto
 
 .PHONY: all vendor build run caller gen
 
