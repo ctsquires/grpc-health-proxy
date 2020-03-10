@@ -36,9 +36,9 @@ func HTTPOpsServerFromConfig(ctx context.Context, grpcServer *grpc.Server, cfg *
 
 	mux := http.NewServeMux()
 	mux.Handle("/", runMux)
-	OpsHttpServer := &http.Server{
+	OpsHTTPServer := &http.Server{
 		Addr:    fmt.Sprintf(":%d", cfg.Port),
 		Handler: mux,
 	}
-	return OpsHttpServer, nil
+	return OpsHTTPServer, nil
 }

@@ -55,11 +55,11 @@ func main() {
 		errChan <- grpcServer.Serve(lis)
 	}()
 	go func() {
-		log.Println(ctx, "Health Http Server Listening On", *healthPort)
+		log.Println(ctx, "Health HTTP Server Listening On", *healthPort)
 		errChan <- healthHTTPServer.ListenAndServe()
 	}()
 	go func() {
-		log.Println(ctx, "Ops Http Server Listening On", 8084)
+		log.Println(ctx, "Ops HTTP Server Listening On", 8084)
 		errChan <- opsHTTPServer.ListenAndServe()
 	}()
 

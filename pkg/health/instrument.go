@@ -24,9 +24,9 @@ func HTTPHealthServerFromPort(ctx context.Context, grpcServer *grpc.Server, port
 	mux := http.NewServeMux()
 	mux.Handle("/", runMux)
 
-	healthHttpServer := &http.Server{
+	healthHTTPServer := &http.Server{
 		Addr:    fmt.Sprintf(":%d", port),
 		Handler: mux,
 	}
-	return healthHttpServer, nil
+	return healthHTTPServer, nil
 }
