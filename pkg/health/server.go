@@ -5,7 +5,7 @@ import (
 	"log"
 	"sync"
 
-	healthpb "github.com/ctsquires/grpc-health-proxy/pkg/health/grpc_health_proxy"
+	healthpb "github.com/ctsquires/grpc-health-proxy/pkg/grpc_health_proxy"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
