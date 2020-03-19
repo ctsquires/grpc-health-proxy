@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	healthpb "github.com/ctsquires/grpc-health-proxy/pkg/grpc_health_proxy"
+	healthpb "github.com/ctsquires/grpc-health-proxy/pkg/health/grpc_health_proxy"
 
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"google.golang.org/grpc"
