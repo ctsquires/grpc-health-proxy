@@ -16,6 +16,7 @@ run:
 caller:
 	grpcurl -v --plaintext -d '{"name":"Connor"}' localhost:8080 helloproto.Greeter/SayHello
 	grpcurl --plaintext localhost:8080 healthproto.Health/Check
+	curl localhost:8082/health
 
 lint: ## Reorders imports and runs the golangci-lint checker
 	goimports -d -e -w ./cmd ./pkg
@@ -24,13 +25,9 @@ lint: ## Reorders imports and runs the golangci-lint checker
 gen:
 	protoc -I . -I external/ --go_out=plugins=grpc:pkg ./proto/health.proto
 	protoc -I . -I external/ --go_out=plugins=grpc:pkg --grpc-gateway_out=logtostderr=true:pkg ./proto/health.proto
-	protoc -I . -I external/ --go_out=plugins=grpc:pkg ./proto/ops.proto
-	protoc -I . -I external/ --go_out=plugins=grpc:pkg --grpc-gateway_out=logtostderr=true:pkg ./proto/ops.proto
 	protoc -I . --go_out=plugins=grpc:pkg ./proto/helloworld.proto
-	mv pkg/proto/health.pb.go pkg/health
-	mv pkg/proto/health.pb.gw.go pkg/health
-	mv pkg/proto/ops.pb.go pkg/ops
-	mv pkg/proto/ops.pb.gw.go pkg/ops
+	mv pkg/proto/health.pb.go pkg/health/grpc_health_proxy/
+	mv pkg/proto/health.pb.gw.go pkg/health/grpc_health_proxy/
 	mv pkg/proto/helloworld.pb.go pkg/hello
 	rmdir pkg/proto
 
