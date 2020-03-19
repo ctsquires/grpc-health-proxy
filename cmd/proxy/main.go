@@ -26,7 +26,7 @@ func main() {
 	hello.RegisterGreeterServer(grpcServer, hello.NewHelloServer())
 	reflection.Register(grpcServer)
 
-	serviceNames := []string{"helloproto.Greeter"}
+	serviceNames := []string{"helloworld.Greeter"}
 
 	healthHTTPServer, err := health.HTTPHealthServerFromPort(ctx, grpcServer, *healthPort, serviceNames)
 	if err != nil {
@@ -40,11 +40,11 @@ func main() {
 
 	errChan := make(chan error)
 	go func() {
-		log.Println(ctx, "HelloWorld gRPC Server Listening on", *appPort)
+		log.Println("HelloWorld gRPC Server Listening on", *appPort)
 		errChan <- grpcServer.Serve(lis)
 	}()
 	go func() {
-		log.Println(ctx, "Health HTTP Server Listening On", *healthPort)
+		log.Println("Health HTTP Server Listening On", *healthPort)
 		errChan <- healthHTTPServer.ListenAndServe()
 	}()
 

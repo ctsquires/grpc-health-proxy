@@ -26,7 +26,6 @@ func NewHealthServer() *Server {
 func (s *Server) Check(ctx context.Context, req *healthpb.HealthCheckRequest) (*healthpb.HealthCheckResponse, error) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
-	log.Printf("Health Check Hit")
 	if servingStatus, ok := s.statusMap[req.Service]; ok {
 		return &healthpb.HealthCheckResponse{
 			Status: servingStatus,

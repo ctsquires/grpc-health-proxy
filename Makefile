@@ -14,9 +14,9 @@ run:
 	go run -ldflags="-X main.version=${COMMIT_SHA}" ./cmd/proxy
 
 caller:
-	grpcurl -v --plaintext -d '{"name":"Connor"}' localhost:8080 helloproto.Greeter/SayHello
-	grpcurl --plaintext localhost:8080 healthproto.Health/Check
-	curl localhost:8082/health
+	grpcurl -v --plaintext -d '{"name":"Connor"}' localhost:8080 helloworld.Greeter/SayHello
+	grpcurl --plaintext localhost:8080 grpc_health_proxy.Health/Check
+	curl localhost:8082/healthz
 
 lint: ## Reorders imports and runs the golangci-lint checker
 	goimports -d -e -w ./cmd ./pkg
