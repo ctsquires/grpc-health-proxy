@@ -12,23 +12,36 @@ import (
 )
 
 func HTTPHealthServerFromPort(ctx context.Context, grpcServer *grpc.Server, port int, services []string) (*http.Server, error) {
-	healthServer := NewHealthServer()
-	for _, value := range services {
-		healthServer.SetServingStatus(value, healthpb.HealthCheckResponse_SERVING)
-	}
-	healthpb.RegisterHealthServer(grpcServer, healthServer)
+	healthServer := ConfigureGRPCHealthServer(grpcServer, services)
 
-	runMux := runtime.NewServeMux()
-	if err := healthpb.RegisterHealthHandlerServer(ctx, runMux, healthServer); err != nil {
+	mux, err := ConfigureHTTPHealthServer(ctx, healthServer)
+	if err != nil {
 		return nil, fmt.Errorf("Could not register health handler server ")
 	}
-
-	mux := http.NewServeMux()
-	mux.Handle("/", runMux)
 
 	healthHTTPServer := &http.Server{
 		Addr:    fmt.Sprintf(":%d", port),
 		Handler: mux,
 	}
 	return healthHTTPServer, nil
+}
+
+func ConfigureGRPCHealthServer(grpcServer *grpc.Server, services []string) healthpb.HealthServer {
+	healthServer := NewHealthServer()
+	for _, value := range services {
+		healthServer.SetServingStatus(value, healthpb.HealthCheckResponse_SERVING)
+	}
+	healthpb.RegisterHealthServer(grpcServer, healthServer)
+	return healthServer
+}
+
+func ConfigureHTTPHealthServer(ctx context.Context, server healthpb.HealthServer) (*http.ServeMux, error) {
+	runMux := runtime.NewServeMux()
+	if err := healthpb.RegisterHealthHandlerServer(ctx, runMux, server); err != nil {
+		return nil, fmt.Errorf("Could not register health handler server ")
+	}
+
+	mux := http.NewServeMux()
+	mux.Handle("/", runMux)
+	return mux, nil
 }
