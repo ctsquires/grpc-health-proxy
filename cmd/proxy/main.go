@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"net/http"
+	"time"
 
 	"github.com/ctsquires/grpc-health-proxy/pkg/health"
 	"github.com/ctsquires/grpc-health-proxy/pkg/hello"
@@ -14,7 +16,7 @@ import (
 )
 
 var (
-	appPort    = flag.Int("port", 8080, "The server port")
+	appPort    = flag.Int("port", 8081, "The server port")
 	healthPort = flag.Int("health-port", 8082, "The server port")
 )
 
@@ -26,13 +28,12 @@ func main() {
 	hello.RegisterGreeterServer(grpcServer, hello.NewHelloServer())
 	reflection.Register(grpcServer)
 
-	serviceNames := []string{"helloworld.Greeter"}
-
-	healthHTTPServer, err := health.HTTPHealthServerFromPort(ctx, grpcServer, *healthPort, serviceNames)
+	healthHTTPServer, healthGRPCServer, err := health.HTTPHealthServerFromPort(ctx, grpcServer, *healthPort)
 	if err != nil {
 		log.Fatal("Could not register health handler server")
 	}
 
+	healthGRPCServer.SetReadyStatus(true)
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", *appPort))
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)

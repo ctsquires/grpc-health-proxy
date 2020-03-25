@@ -5,32 +5,29 @@ import (
 	"fmt"
 	"net/http"
 
-	healthpb "github.com/ctsquires/grpc-health-proxy/pkg/health/grpc_health_proxy"
+	"github.com/ctsquires/grpc-health-proxy/pkg/health/healthpb"
 
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"google.golang.org/grpc"
 )
 
-func HTTPHealthServerFromPort(ctx context.Context, grpcServer *grpc.Server, port int, services []string) (*http.Server, error) {
-	healthServer := ConfigureGRPCHealthServer(grpcServer, services)
+func HTTPHealthServerFromPort(ctx context.Context, grpcServer *grpc.Server, port int) (*http.Server, *Server, error) {
+	healthServer := ConfigureGRPCHealthServer(grpcServer)
 
 	mux, err := ConfigureHTTPHealthServer(ctx, healthServer)
 	if err != nil {
-		return nil, fmt.Errorf("Could not register health handler server ")
+		return nil, nil, fmt.Errorf("Could not register health handler server ")
 	}
 
 	healthHTTPServer := &http.Server{
 		Addr:    fmt.Sprintf(":%d", port),
 		Handler: mux,
 	}
-	return healthHTTPServer, nil
+	return healthHTTPServer, healthServer, nil
 }
 
-func ConfigureGRPCHealthServer(grpcServer *grpc.Server, services []string) healthpb.HealthServer {
+func ConfigureGRPCHealthServer(grpcServer *grpc.Server) *Server {
 	healthServer := NewHealthServer()
-	for _, value := range services {
-		healthServer.SetServingStatus(value, healthpb.HealthCheckResponse_SERVING)
-	}
 	healthpb.RegisterHealthServer(grpcServer, healthServer)
 	return healthServer
 }

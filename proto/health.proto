@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-package grpc_health_proxy;
+package health;
 
-option go_package = "grpc_health_proxy";
+option go_package = "healthpb";
 
 import "google/api/annotations.proto";
 
@@ -23,11 +23,12 @@ message HealthCheckResponse {
 service Health {
     rpc Check (HealthCheckRequest) returns (HealthCheckResponse) {
         option (google.api.http) = {
-			get: "/healthz/{service}"
-			additional_bindings {
-				get: "/healthz"
-			}
+			get: "/healthz"
 		};
     };
-
+    rpc Ready (HealthCheckRequest) returns (HealthCheckResponse) {
+        option (google.api.http) = {
+			get: "/readyz"
+		};
+    };
 }
